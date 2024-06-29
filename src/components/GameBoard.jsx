@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import GameCircle from "./GameCircle";
 import isWinner from "../helper.js"
+import { isDrawn } from "../helper.js";
 const NO_PLAYER = 0;
 const PLAYER_1 = 1;
 const PLAYER_2 = 2;
@@ -8,24 +9,29 @@ const PLAYER_2 = 2;
 const GameBoard = () => {
   const [gameBoard, setGameBoard] = useState(Array(16).fill(0));
   const [currentPlayer, setCurrentPlayer] = useState(PLAYER_1);
+  const [isDraw,setDraw] =useState(false)
   const [isWin,setWinner]=useState({
     playerId:null,
     isWin:false
   })
   const onCircleClicked = (id) => {
-    console.log(`Circle clicked ${id}`);
+    // console.log(`Circle clicked ${id}`);
     if (isWinner(gameBoard,id,currentPlayer)) {
         console.log(`Winner Player - ${currentPlayer}`);
         setWinner({playerId:currentPlayer,isWin:true})
     }
-    
+   
      if (gameBoard[id] === 0 && !isWin.isWin) {
             const board = [...gameBoard];
             board[id] = currentPlayer;
             setGameBoard(board);
             setCurrentPlayer(currentPlayer === PLAYER_1 ? PLAYER_2 : PLAYER_1);
     }
-    
+    if (!isDrawn(gameBoard,id,currentPlayer)) {
+      // console.log(`game is  drawn - ${gameBoard}`);
+      setDraw(true)
+      return
+    }
     
     // console.log(gameBoard);
     // console.log(currentPlayer);
@@ -51,6 +57,7 @@ const GameBoard = () => {
     setGameBoard(Array(16).fill(0));
     setCurrentPlayer(PLAYER_1);
     setWinner({playerId:null,isWin:false})
+    setDraw(false)
   };
   return (
     
@@ -60,7 +67,7 @@ const GameBoard = () => {
           Connect - <span className=" text-yellow-400">4</span> Dots
         </h1>
         <div className=" shadow-md shadow-yellow-100 flex justify-center items-center border-[5px] border-yellow-600 py-1 rounded-sm bg-yellow-50">
-          <h2 className={` text-2xl font-semibold`}>
+          {isDraw?<h2 className="text-2xl font-semibold">Match is Draw</h2>:<h2 className={` text-2xl font-semibold`}>
             Player-{" "}
             {isWin.isWin?isWin.playerId:<span
               className={`${
@@ -70,7 +77,7 @@ const GameBoard = () => {
               {currentPlayer}
             </span>}
             {isWin.isWin?" Wins":" Turn"}
-          </h2>
+          </h2>}
         </div>
       </div>
       <div className=" grid grid-cols-4 gap-4 shadow-sm  p-5 rounded-xl shadow-gray-400 bg-black">

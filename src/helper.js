@@ -25,3 +25,8 @@ export default function isWinner(gameBoard,currentMove,currentPlayer){
     }
     return false
 }
+export function isDrawn(gameBoard,currentMove,currentPlayer){
+    let board=[...gameBoard] 
+    board[currentMove]=currentPlayer
+    return board.includes(0)
+}
